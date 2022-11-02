@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JS Server</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;500&display=swap");
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    body,
+    html {
+      height: 100%;
+      width: 100%;
+      font-family: "Poppins", Helvetica, Arial, sans-serif;
+      font-weight: 500;
+      background: linear-gradient(-30deg, #e96a43, #ee4f8c, #3e82e7, #1dabce, #16e45a);
+      background-size: 400%, 400%;
+      background-repeat: no-repeat;
+      animation: gradient 35s ease infinite;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    button {
+      background-color: #f7f7f77f;
+      border: none;
+      border-radius: 10px;
+      color: #404040;
+      padding: 12px 22px;
+      text-align: center;
+      text-decoration: none;
+      font-family: "Poppins", Helvetica, Arial, sans-serif;
+      display: inline-block;
+      font-size: 16px;
+    }
+
+    select {
+      font-family: "Poppins", Helvetica, Arial, sans-serif;
+      font-weight: 500;
+    }
+
+    label {
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="center">
+    <button onclick="toggleLed()">Toggle Onboard LED</button>
+    <br>
+    <br>
+    <label for="mode">Mode</label><br>
+    <select id="mode">
+      <option value=1>Rainbow</option>
+      <option value=2>Pink-Blue</option>
+      <option value=3>Green-Yellow</option>
+    </select>
+    <br>
+    <label for="speed">Speed</label><br>
+    <input type="range" id="speed" min="1" max="100" value="10">
+    <br>
+    <label for="brightness">Brightness</label><br>
+    <input type="range" id="brightness" min="1" max="64" value="10">
+    <br>
+    <br>
+    <button onclick="update()">Update Settings</button>
+  </div>
+</body>
+<script>
+  async function toggleLed() {
+    let response = await fetch("http://192.168.1.14/toggle", { mode: 'no-cors' });
+  }
+
+  async function postData(url = '', data = {}) {
+    const response = await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'application/json' },
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(data)
+    });
+  }
+
+  function update() {
+    const mode = document.getElementById("mode").value;
+    const speed = document.getElementById("speed").value;
+    const brightness = document.getElementById("brightness").value;
+    const url = "http://192.168.1.14/update";
+    const data = {
+      mode: mode,
+      speed: speed,
+      brightness: brightness
+    };
+    postData(url, data)
+  }
+</script>
+
+</html>
